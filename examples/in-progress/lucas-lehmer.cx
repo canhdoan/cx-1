@@ -1,0 +1,104 @@
+package main
+
+var primes []i64
+var mersennes []i64
+
+func llTest(ps []i64) {
+	var s i64
+	var m i64
+	var count i32
+
+	one := 1L
+	two := 2L
+
+	count = len(ps)
+
+	for i := 0 ; i < count; i++ {
+		m = i64.bitshl(one, ps[i])
+		m = i64.sub(m, one)
+		s = 4L
+
+		for j := 2L; j < ps[i]; {
+			s = i64.mul(s, s)
+			s = i64.sub(s, two)
+			s = i64.mod(s, m)
+			j = i64.add(j, 1L)
+		}
+
+		if i64.bitlen(s) == 0L {
+			i64.print(ps[i])
+		}
+	}
+}
+
+func initial() {
+    // setup values for arrays
+    primes = append(primes, 3L)
+    primes = append(primes, 5L)
+    primes = append(primes, 7L)
+    primes = append(primes, 11L)
+    primes = append(primes, 13L)
+    primes = append(primes, 17L)
+    primes = append(primes, 19L)
+    primes = append(primes, 23L)
+    primes = append(primes, 29L)
+    primes = append(primes, 31L)
+    primes = append(primes, 37L)
+    primes = append(primes, 41L)
+    primes = append(primes, 43L)
+    primes = append(primes, 47L)
+    primes = append(primes, 53L)
+    primes = append(primes, 59L)
+    primes = append(primes, 61L)
+    primes = append(primes, 67L)
+    primes = append(primes, 71L)
+    primes = append(primes, 73L)
+    primes = append(primes, 79L)
+    primes = append(primes, 83L)
+    primes = append(primes, 89L)
+    primes = append(primes, 97L)
+    primes = append(primes, 101L)
+    primes = append(primes, 103L)
+    primes = append(primes, 107L)
+    primes = append(primes, 109L)
+    primes = append(primes, 113L)
+    primes = append(primes, 127L)
+
+    mersennes = append(mersennes, 521L)
+    mersennes = append(mersennes, 607L)
+    mersennes = append(mersennes, 1279L)
+    mersennes = append(mersennes, 2203L)
+    mersennes = append(mersennes, 2281L)
+    mersennes = append(mersennes, 3217L)
+    mersennes = append(mersennes, 4253L)
+    mersennes = append(mersennes, 4423L)
+    mersennes = append(mersennes, 9689L)
+    mersennes = append(mersennes, 9941L)
+    mersennes = append(mersennes, 11213L)
+    mersennes = append(mersennes, 19937L)
+    mersennes = append(mersennes, 21701L)
+    mersennes = append(mersennes, 23209L)
+    mersennes = append(mersennes, 44497L)
+    mersennes = append(mersennes, 86243L)
+    mersennes = append(mersennes, 110503L)
+    mersennes = append(mersennes, 132049L)
+    mersennes = append(mersennes, 216091L)
+    mersennes = append(mersennes, 756839L)
+    mersennes = append(mersennes, 859433L)
+    mersennes = append(mersennes, 1257787L)
+    mersennes = append(mersennes, 1398269L)
+    mersennes = append(mersennes, 2976221L)
+    mersennes = append(mersennes, 3021377L)
+    mersennes = append(mersennes, 6972593L)
+    mersennes = append(mersennes, 13466917L)
+    mersennes = append(mersennes, 20996011L)
+    mersennes = append(mersennes, 24036583L)
+}
+
+
+func main() {
+	initial()
+	llTest(primes)
+	printf("")
+	//llTest(mersennes)
+}

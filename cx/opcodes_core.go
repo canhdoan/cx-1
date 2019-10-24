@@ -155,6 +155,7 @@ const (
 	OP_I64_LOG2
 	OP_I64_MAX
 	OP_I64_MIN
+	OP_I64_BITLEN
 
 	OP_F32_IS_NAN
 	OP_F32_PRINT
@@ -667,6 +668,9 @@ func init() {
 	AddOpCode(OP_I64_MIN, "i64.min",
 		[]*CXArgument{newOpPar(TYPE_I64, false), newOpPar(TYPE_I64, false)},
 		[]*CXArgument{newOpPar(TYPE_I64, false)})
+	AddOpCode(OP_I64_BITLEN, "i64.bitlen",
+		[]*CXArgument{newOpPar(TYPE_I64, false)},
+		[]*CXArgument{newOpPar(TYPE_I64, false)})
 
 	AddOpCode(OP_F32_IS_NAN, "f32.isnan",
 		[]*CXArgument{newOpPar(TYPE_F32, false)},
@@ -1174,6 +1178,8 @@ func init() {
 			return opI64Max
 		case OP_I64_MIN:
 			return opI64Min
+		case OP_I64_BITLEN:
+			return opI64Bitlen
 
 		case OP_F32_IS_NAN:
 			return opF32Isnan

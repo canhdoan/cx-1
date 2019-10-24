@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"math/big"
 	"strconv"
 
 	"github.com/amherag/skycoin/src/cipher/encoder"
@@ -324,5 +325,16 @@ func opI64Min(prgrm *CXProgram) {
 
 	inp1, inp2, out1 := expr.Inputs[0], expr.Inputs[1], expr.Outputs[0]
 	outB1 := FromI64(int64(math.Min(float64(ReadI64(fp, inp1)), float64(ReadI64(fp, inp2)))))
+	WriteMemory(GetFinalOffset(fp, out1), outB1)
+}
+
+// The built-in bitlen function returns the bit lenght of an i64 value
+
+func opI64Bitlen(prgrm *CXProgram) {
+	expr := prgrm.GetExpr()
+	fp := prgrm.GetFramePointer()
+
+	inp1, out1 := expr.Inputs[0], expr.Outputs[0]
+	outB1 := FromI64(int64(new(big.Int).SetInt64(ReadI64(fp, inp1)).BitLen()))
 	WriteMemory(GetFinalOffset(fp, out1), outB1)
 }

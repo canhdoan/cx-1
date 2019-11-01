@@ -1,0 +1,132 @@
+package main
+
+func numPrimeFactors(x i32) (i i32) {
+	var p i32
+	p = 2
+
+	var pf i32
+	pf = 0
+
+	var minorX i32
+	minorX = x
+
+	if i32.eq(minorX, 1) {
+		i = 1
+		return
+	}
+
+	var h i32
+	for true {
+		h = i32.mod(minorX, p)
+
+		if i32.eq(h, 0) {
+			pf = i32.add(pf, 1)
+			minorX = i32.div(minorX, p)
+
+			if i32.eq(minorX, 1) {
+				i = pf
+				return
+			}
+		} else {
+			p = i32.add(p, 1)
+		}
+	}
+}
+
+
+func primeFactors(x i32) (out []i32) {
+	var arr []i32
+	
+	var p i32
+	p = 2
+
+	var pf i32
+	pf = 0
+
+	var minorX i32
+	minorX = x
+
+	if i32.eq(minorX, 1) {
+		arr = append(arr, 1)
+	}
+
+	var h i32
+	for true {
+		h = i32.mod(minorX, p)
+
+		if i32.eq(h, 0) {
+			
+			arr = append(arr, p)
+			pf = i32.add(pf, 1)
+
+			minorX = i32.div(minorX, p)
+			if i32.eq(minorX, 1) {
+				out = arr
+				return
+			}
+		} else {
+			p = i32.add(p, 1)
+		}
+	}
+
+	out = arr
+}
+
+func sumDigits(x i32) (r i32) {
+	var sum i32
+	var m i32
+	var minorX i32
+	minorX = x
+
+	for ; i32.uneq(minorX, 0); {
+		m = i32.mod(minorX, 10)
+		sum = i32.add(sum, m)
+		minorX = i32.div(minorX, 10)
+	}
+
+	r = sum
+}
+
+
+func sumFactors(arr []i32, size i32) (r i32) {
+	var sum i32
+	var sumDigit i32
+	var a i32
+	for a = 0; a < size; a++ {
+		sumDigit = sumDigits(arr[a])
+		sum = i32.add(sum, sumDigit)
+	}
+
+	r = sum
+}
+
+
+func listAllSmithNumbers(max i32) {
+	var arr []i32
+	var a i32
+	var numfactors i32
+	var sumDigit i32
+	var sumFactor i32
+	
+	for a = 4; a < max; {
+		numfactors = numPrimeFactors(a)
+		if i32.gt(numfactors, 2) {
+			arr = primeFactors(a)
+			sumDigit = sumDigits(a)
+			sumFactor = sumFactors(arr, i32.i32(numfactors))
+
+			if i32.eq(sumDigit, sumFactor) {
+				printf("%d\t", a)
+			}
+		}
+
+		a = i32.add(a, 1) // increase
+	}
+}
+
+
+func main() {
+	var maxSmith i32
+	maxSmith = 10000
+	listAllSmithNumbers(maxSmith)
+}

@@ -1,6 +1,6 @@
 package main
 
-var tens [20]i64
+var tens [10]i64
  
 func max(a i64, b i64) (out i64) {
     if i64.gt(a,b) {
@@ -19,25 +19,30 @@ func min(a i64, b i64) (out i64) {
  
 func ndigits(x i64) (out i64) {
 	n := 0L
-    for ; i64.gt(x, 0L); {
+    for ;i64.gt(x, 0L); {
         n = i64.add(n, 1L)
 		x = i64.div(x, 10L)
     }
     out = n
 }
  
-func dtally(x i64) (t i64) {
-	m := 0L
+func dtally(x i64) (out i64) {
+	var m i64
+	var t i64
+	m = 0L
+	t = 0L
     for ; i64.gt(x, 0L); {
 		m = i64.mul(i64.mod(x, 10L), 6L)
 		t = i64.add(t, i64.bitshl(1L, m))
         x = i64.div(x, 10L)
     }
+
+	out = t
 }
  
 func init() {
     tens[0] = 1L
-    for i := 1; i32.lt(i, 20); i++ {
+    for i := 1; i32.lt(i, 10); i++ {
         tens[i] = i64.mul(tens[i-1], 10L)
     }
 }
@@ -45,42 +50,55 @@ func init() {
 func fangs(x i64) (out []i64) {
     var f []i64
     var nd i64
-
+	var nd_and i64
     nd = ndigits(x)
-	
-    if i64.eq(i64.bitand(nd, 1L), 1L) {
+	nd_and = i64.bitand(nd, 1L)
+    if i64.eq(nd_and, 1L) {
+		out = f
         return
     }
 
     var t i64
     var m i64
+	var n i64
     var lo i64
     var hi i64
     var idx i32
 	
     nd = i64.div(nd, 2L)
-
-	t = i64.add(x, i64.sub(tens[nd], 2L))
-
-	m = i64.div(t, i64.sub(tens[nd],1L))
-
+	
+	n = i64.add(x, i64.sub(tens[nd], 2L))
+	
+	m = i64.div(n, i64.sub(tens[nd], 1L))
+	
     idx = i32.sub(i64.i32(nd), 1)
+	
 	lo = i64.max(tens[idx], m)
-
-	hi = min(i64.div(x, lo), i64.sqrt(i64.f64(x)))
+	
+	hi = min(i64.div(x, lo), i64.sqrt(x))
 
     t = dtally(x)
-    
+
     var a i64
     var b i64
     var v i64
+	var da i64
+	var db i64
+	var ma i64
+	var mda i64
+	var mdb i64
 	
     for a = lo; i64.lteq(a, hi); {
 
-		b = i64.div(x,a)
-		v = i64.add(dtally(a), dtally(b))
-		
-        if i64.eq(i64.mul(a,b),x) && (i64.gt(i64.mod(a,10), 0) || i64.gt(i64.mod(b,10),0)) && i64.eq(t,v) {
+		b = i64.div(x, a)
+		da = dtally(a)
+		db = dtally(b)
+		v = i64.add(da, db)
+
+		ma = i64.mul(a, b)
+		mda = i64.mod(a, 10L)
+		mdb = i64.mod(b, 10L)
+        if i64.eq(ma, x) && (i64.gt(mda, 0L) || i64.gt(mdb, 0L)) && i64.eq(t, v) {
             f = append(f, a)
         }
 
@@ -90,47 +108,39 @@ func fangs(x i64) (out []i64) {
 }
  
 func showFangs(x i64, f []i64) {
-    i64.print(x)
-
-	l := len(f)
+	printf("NUMBER = ")
+	i64.print(x)
+	var l i32
+	l = len(f)
 	
-    if i32.gt(1) {
-        printf()
+    if i32.gt(l, 1) {
+		printf("\n")
     }
 	
-    for i := 0; i32.lt(i,l); i++ {
-		printf(" = %D x %D", f[i], i64.div(x,f[i]))
+    for i := 0; i32.lt(i, l); i++ {
+		i64.print(f[i])
+		printf("x\n")
+		i64.print(i64.div(x, f[i]))
 	}
 }
  
 func main() {
+	// initialize
+	init()
+	
+	var f []i64
+	var l i32
 	x := 1L
 	n := 0L
 	
-    for ; i64.lt(n,26L);  {
-		f := fangs(x)
-		
-        if len(f) > 0 {
-            n = i64.add(n,1L)
-            printf("%2d: ", n)
+    for ; i64.lt(n, 10L);  {
+		f = fangs(x)
+		l = len(f)
+        if l > 0 {
+            n = i64.add(n, 1L)
             showFangs(x, f)
         }
 
-		x = i64.add(x,1L)
-    }
-
-	printf()
-	var array [3]i64
-	array[0] = 16758243290880
-	array[1] = 24959017348650
-	array[2] = 14593825548650
-	
-    for i := 0; i32.lt(i,3); i++ {
-		f := fangs(array[i])
-        if len(f) > 0 {
-            showFangs(array[i], f)
-        } else {
-            printf("%D is not vampiric", array[i])
-        }
+		x = i64.add(x, 1L)
     }
 }

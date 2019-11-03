@@ -1,0 +1,222 @@
+package main
+
+var supply []i32
+var demand []i32
+
+var costs [4][5]i32
+var results [4][5]i32
+
+var nRows i32
+var nCols i32
+
+var rowDone [4]bool
+var colDone [5]bool
+ 
+var minI32 i32
+var maxI32 i32
+
+func init() {
+	nRows = 4
+	nCols = 5
+	
+	supply = append(supply, 50)
+	supply = append(supply, 60)
+	supply = append(supply, 50)
+	supply = append(supply, 50)
+
+	demand = append(demand, 30)
+	demand = append(demand, 20)
+	demand = append(demand, 70)
+	demand = append(demand, 30)
+	demand = append(demand, 60)
+	
+	costs[0][0] = 16
+	costs[0][1] = 16
+	costs[0][2] = 13
+	costs[0][3] = 22
+	costs[0][4] = 17
+
+	costs[1][0] = 14
+	costs[1][1] = 14
+	costs[1][2] = 13
+	costs[1][3] = 19
+	costs[1][4] = 15
+
+	costs[2][0] = 19
+	costs[2][1] = 19
+	costs[2][2] = 20
+	costs[2][3] = 23
+	costs[2][4] = 50
+
+	costs[3][0] = 50
+	costs[3][1] = 12
+	costs[3][2] = 50
+	costs[3][3] = 15
+	costs[3][4] = 11
+
+	minI32 = -2147483648
+	maxI32 = 2147483647
+}
+
+func diff(j i32, l i32, isRow bool) (out []i32) {
+	var res []i32
+    min1 := maxI32
+    min2 := min1
+	minP := -1
+	
+    for i := 0; i < l; i++ {
+        var done bool
+        if isRow {
+            done = colDone[i]
+        } else {
+            done = rowDone[i]
+		}
+		
+        if done {
+            continue
+		}
+		
+		var c i32
+		
+        if isRow {
+            c = costs[j][i]
+        } else {
+            c = costs[i][j]
+		}
+		
+        if c < min1 {
+			min2 = min1
+			min1 = c
+			minP = i
+        } else if c < min2 {
+            min2 = c
+        }
+	}
+	res = append(res, i32.sub(min2, min1))
+	res = append(res, min1)
+	res = append(res, minP)
+
+	out = res
+}
+ 
+func maxPenalty(len1 i32, len2 i32, isRow bool) (out []i32) {
+	var res []i32
+	var t []i32
+    md := minI32
+	pc := -1
+	pm := -1
+	mc := -1
+
+    for i := 0; i < len1; i++ {
+        var done bool
+        if isRow {
+            done = rowDone[i]
+        } else {
+            done = colDone[i]
+		}
+		
+        if done {
+            continue
+		}
+		
+        t = diff(i, len2, isRow)
+        if t[0] > md {
+            md = t[0]  // max diff
+            pm = i       // pos of max diff
+            mc = t[1]  // min cost
+            pc = t[2]  // pos of min cost
+        }
+    }
+    if isRow {
+		res = append(res, pm)
+		res = append(res, pc)
+		res = append(res, mc)
+		res = append(res, md)
+
+		out = res
+		return
+	}
+	res = append(res, pc)
+	res = append(res, pm)
+	res = append(res, mc)
+	res = append(res, md)
+
+	out = res
+}
+
+func nextCell() (out []i32) {
+	var res1 []i32
+	var res2 []i32
+
+    res1 = maxPenalty(nRows, nCols, true)
+	res2 = maxPenalty(nCols, nRows, false)
+	if i32.eq(res1[3], res2[3]) {
+		if (i32.lt(res1[2], res2[2])) {
+			out = res1
+			return
+		} else {
+			out = res2
+			return
+		}
+	} else if (i32.gt(res1[3], res2[3])) {
+		out = res2
+		return
+	} else {
+		out = res1
+		return
+	}
+}
+ 
+func main() {
+	// initialize
+	init()
+	
+	var suppLen i32
+	var supplyLeft i32
+
+	suppLen = len(supply)
+    supplyLeft = 0
+    for i := 0; i < len(supply); i++ {
+        supplyLeft = i32.add(supplyLeft, supply[i])
+	}
+
+	var cell []i32
+	var r i32
+	var c i32
+	var q i32
+	var totalCost i32
+	
+    totalCost = 0
+    for ; supplyLeft > 0; {
+        cell = nextCell()
+        r = cell[0]
+		c = cell[1]
+        q = demand[c]
+        if q > supply[r] {
+            q = supply[r]
+        }
+		
+        demand[c] = i32.sub(demand[c], q)
+        if demand[c] == 0 {
+            colDone[c] = true
+        }
+		
+        supply[r] = i32.sub(supply[r], q)
+        if supply[r] == 0 {
+            rowDone[r] = true
+        }
+		
+        results[r][c] = q
+        supplyLeft = i32.sub(supplyLeft, q)
+        totalCost = i32.add(totalCost, i32.mul(q, costs[r][c]))
+    }
+ 
+    for i := 0; i < 4; i++{
+        for j := 0; j < 5; j++ {
+            printf("%d\t", results[i][j])
+        }
+        printf("\n")
+    }
+    printf("\nTotal cost = %d\n", totalCost)
+}
+
